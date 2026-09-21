@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Greeting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #d81b60;
+      --primary-dark: #880e4f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Quicksand', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #fce4ec;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    /* Frame iPhone */
+    .iphone {
+      width: 320px;
+      height: 640px;
+      background: #212121;
+      border-radius: 46px;
+      padding: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #fff8f9;
+      border-radius: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Notch & Home Bar */
+    .notch, .home-bar {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+    }
+
+    .notch {
+      width: 90px;
+      height: 24px;
+      background: #000;
+      border-radius: 20px;
+      top: 10px;
+    }
+
+    .home-bar {
+      width: 110px;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      bottom: 8px;
+    }
+
+    /* Layar Tampilan & Efek Pop-up */
+    .view-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .pop-out {
+      opacity: 0 !important;
+      transform: scale(0.92) !important;
+      pointer-events: none;
+    }
+
+    .pop-in {
+      animation: popInAnim 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes popInAnim {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* 1. Tampilan Awal */
+    #view-awal {
+      padding: 24px;
+      background: linear-gradient(180deg, #fff 0%, #fce4ec 100%);
+    }
+
+    .pesan-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+    }
+
+    .pesan-sub {
+      font-size: 14px;
+      font-weight: 600;
+      color: #6a1b9a;
+      margin-bottom: 28px;
+    }
+
+    .btn-play {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(216, 27, 96, 0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .btn-play:active, .kado-box:active, .btn-nav:active, .btn-skip:active {
+      transform: scale(0.92);
+    }
+
+    .btn-play svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+      margin-left: 3px;
+    }
+
+    /* Video Player */
+    .video-container {
+      background: #000;
+      z-index: 20;
+    }
+
+    video, .wadah-foto img, .wadah-foto {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 3. Slider Foto & Kado */
+    #view-konten {
+      background: #fff;
+      z-index: 10;
+    }
+
+    .wadah-kado {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #fff0f3;
+    }
+
+    /* Kotak Kado & Animasi */
+    .kado-box {
+      width: 110px;
+      height: 110px;
+      background: var(--primary);
+      border-radius: 22px;
+      position: relative;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 24px rgba(216, 27, 96, 0.3);
+      animation: goyangKado 2.4s ease-in-out infinite;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    @keyframes goyangKado {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      20% { transform: translateY(-8px) rotate(-4deg); }
+      40% { transform: translateY(-2px) rotate(4deg); }
+      60% { transform: translateY(-6px) rotate(-2deg); }
+      80% { transform: translateY(0) rotate(2deg); }
+    }
+
+    .kado-aktif {
+      animation: none !important;
+      transform: scale(1.15) rotate(6deg) !important;
+      box-shadow: 0 16px 32px rgba(216, 27, 96, 0.5);
+    }
+
+    .pita-v, .pita-h {
+      position: absolute;
+      background: #ffd54f;
+    }
+
+    .pita-v { width: 20px; height: 100%; }
+    .pita-h { height: 20px; width: 100%; }
+
+    .simpul {
+      position: absolute;
+      top: -20px;
+      font-size: 32px;
+      z-index: 2;
+    }
+
+    .teks-kado {
+      margin-top: 22px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    /* Tombol Navigasi */
+    .btn-nav, .btn-skip {
+      position: absolute;
+      bottom: 24px;
+      cursor: pointer;
+      z-index: 30;
+      font-weight: 700;
+    }
+
+    .btn-nav {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 1px solid rgba(216, 27, 96, 0.2);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-back { left: 16px; color: #555; }
+    .btn-next { right: 16px; color: var(--primary); }
+
+    .btn-skip {
+      right: 16px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="iphone">
+    <div class="screen">
+      <div class="notch"></div>
+      <div class="home-bar"></div>
+
+      <!-- 1. Tampilan Awal -->
+      <div id="view-awal" class="view-screen">
+        <h1 class="pesan-title">For My Princess</h1>
+        <p class="pesan-sub">Kalo kepo diklik yak!</p>
+        <button class="btn-play" onclick="transisiLayar(viewAwal, viewVideo, putarOpening)" aria-label="Putar Video">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+
+      <!-- 2. Video Opening -->
+      <div id="view-video" class="view-screen video-container hidden">
+        <video id="videoOpening" playsinline src="Opening.mp4"></video>
+        <button class="btn-skip" onclick="selesaiOpening()">Skip</button>
+      </div>
+
+      <!-- 3. Tampilan Foto & Kado -->
+      <div id="view-konten" class="view-screen hidden">
+        <div class="wadah-foto" id="kartuFoto">
+          <img id="imgDisplay" src="Foto1.jpg" alt="Foto">
+        </div>
+
+        <div class="wadah-kado hidden" id="wadahKado">
+          <div id="boxKado" class="kado-box" onclick="bukaKado()">
+            <div class="simpul">🎀</div>
+            <div class="pita-v"></div>
+            <div class="pita-h"></div>
+          </div>
+          <p class="teks-kado">Ada bonus hadiah, dibuka yak!</p>
+        </div>
+
+        <!-- Video Hasil Kado -->
+        <div id="wadah-video-kado" class="view-screen video-container hidden">
+          <video id="videoKado" playsinline src="Ledek.mp4"></video>
+        </div>
+
+        <button id="btnBack" class="btn-nav btn-back hidden" onclick="geserSlide(-1)">Back</button>
+        <button id="btnNext" class="btn-nav btn-next" onclick="geserSlide(1)">Next</button>
+      </div>
+
+      <!-- 4. Video Ending -->
+      <div id="view-ending" class="view-screen video-container hidden">
+        <video id="videoEnding" playsinline src="End.mp4"></video>
+        <button class="btn-skip" onclick="resetKeAwal()">End</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const daftarFoto = ["Foto1.jpg", "Foto2.jpg"];
+    let slideAktif = 0;
+    const totalSlide = daftarFoto.length + 1;
+    let sedangTransisi = false;
+
+    const viewAwal = document.getElementById('view-awal');
+    const viewVideo = document.getElementById('view-video');
+    const viewKonten = document.getElementById('view-konten');
+    const viewEnding = document.getElementById('view-ending');
+
+    const videoOpening = document.getElementById('videoOpening');
+    const videoKado = document.getElementById('videoKado');
+    const videoEnding = document.getElementById('videoEnding');
+    const wadahVideoKado = document.getElementById('wadah-video-kado');
+
+    const kartuFoto = document.getElementById('kartuFoto');
+    const imgDisplay = document.getElementById('imgDisplay');
+    const wadahKado = document.getElementById('wadahKado');
+    const boxKado = document.getElementById('boxKado');
+    const btnBack = document.getElementById('btnBack');
+    const btnNext = document.getElementById('btnNext');
+
+    // Helper transisi antar view screen
+    function transisiLayar(dari, ke, callback) {
+      if (sedangTransisi) return;
+      sedangTransisi = true;
+      dari.classList.add('pop-out');
+
+      setTimeout(() => {
+        dari.classList.add('hidden');
+        dari.classList.remove('pop-out');
+        ke.classList.remove('hidden');
+        if (callback) callback();
+        sedangTransisi = false;
+      }, 300);
+    }
+
+    function putarOpening() {
+      videoOpening.currentTime = 0;
+      videoOpening.play().catch(() => {});
+    }
+
+    function selesaiOpening() {
+      videoOpening.pause();
+      transisiLayar(viewVideo, viewKonten, () => {
+        slideAktif = 0;
+        updateTampilan();
+      });
+    }
+
+    videoOpening.addEventListener('ended', selesaiOpening);
+
+    function terapkanPopIn(el) {
+      el.classList.remove('pop-in', 'pop-out');
+      void el.offsetWidth;
+      el.classList.add('pop-in');
+    }
+
+    function updateTampilan() {
+      const isKado = (slideAktif === totalSlide - 1);
+      btnBack.classList.toggle('hidden', slideAktif === 0);
+      btnNext.classList.remove('hidden');
+      btnNext.innerHTML = isKado ? 'End' : 'Next';
+
+      kartuFoto.classList.toggle('hidden', isKado);
+      wadahKado.classList.toggle('hidden', !isKado);
+
+      if (!isKado) imgDisplay.src = daftarFoto[slideAktif];
+      terapkanPopIn(isKado ? wadahKado : kartuFoto);
+    }
+
+    function geserSlide(arah) {
+      if (sedangTransisi) return;
+      const target = slideAktif + arah;
+
+      if (target >= totalSlide) {
+        transisiLayar(viewKonten, viewEnding, () => {
+          videoEnding.currentTime = 0;
+          videoEnding.play().catch(() => {});
+        });
+        return;
+      }
+
+      sedangTransisi = true;
+      const aktif = (slideAktif === totalSlide - 1) ? wadahKado : kartuFoto;
+      aktif.classList.add('pop-out');
+
+      setTimeout(() => {
+        slideAktif = target;
+        updateTampilan();
+        sedangTransisi = false;
+      }, 250);
+    }
+
+    function bukaKado() {
+      if (sedangTransisi) return;
+      sedangTransisi = true;
+      btnBack.classList.add('hidden');
+      btnNext.classList.add('hidden');
+      boxKado.classList.add('kado-aktif');
+
+      setTimeout(() => {
+        wadahVideoKado.classList.remove('hidden');
+        videoKado.currentTime = 0;
+        videoKado.play().catch(() => {});
+        boxKado.classList.remove('kado-aktif');
+        sedangTransisi = false;
+      }, 350);
+    }
+
+    videoKado.addEventListener('ended', () => {
+      wadahVideoKado.classList.add('hidden');
+      videoKado.pause();
+      updateTampilan();
+    });
+
+    function resetKeAwal() {
+      videoEnding.pause();
+      transisiLayar(viewEnding, viewAwal, () => {
+        viewKonten.classList.add('hidden');
+        slideAktif = 0;
+      });
+    }
+
+    videoEnding.addEventListener('ended', resetKeAwal);
+  </script>
+
+</body>
+</html>
